@@ -1,3 +1,22 @@
+// SCREENSHOTS — to show recruiters your UI, terminal output, reports,
+// anything: drop image files in /public/projects/<slug>/ and list them
+// in that project's `images` array. They appear on the case-study page
+// as numbered figures with a click-to-enlarge lightbox, e.g.
+//   images: [
+//     {
+//       src: "/projects/gaa-match-analysis/pitch-map.png",
+//       alt: "Interactive pitch map with tagged shot events",
+//       caption: "The interactive pitch map — every tagged event, plotted",
+//     },
+//   ],
+// alt is required (screen readers); caption is optional — shown under
+// the figure, falls back to alt if omitted.
+export type ProjectImage = {
+  src: string;
+  alt: string;
+  caption?: string;
+};
+
 export type Project = {
   slug: string;
   name: string;
@@ -16,7 +35,7 @@ export type Project = {
   decisions?: { title: string; detail: string }[];
   challenges?: string;
   nextSteps?: string;
-  images?: { src: string; alt: string }[];
+  images?: ProjectImage[];
 };
 
 // EDIT ME — this is the only file you need to touch to update project content.

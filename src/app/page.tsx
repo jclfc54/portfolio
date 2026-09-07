@@ -1,110 +1,208 @@
 import Link from "next/link";
+import Image from "next/image";
 import { projects } from "@/data/projects";
+import { hero, heroFacts, homeAbout } from "@/data/profile";
 import ProjectCard from "@/components/ProjectCard";
-import Divider from "@/components/Divider";
+import ProjectPlate from "@/components/ProjectPlate";
+import SectionHead from "@/components/SectionHead";
+import Reveal from "@/components/Reveal";
+import Portrait from "@/components/Portrait";
 import Tag from "@/components/Tag";
+import { ArrowRight, Download } from "@/components/Icon";
 
+/*
+  Home follows the portfolio-grid pattern from the design system:
+    Hero (name / role) > Project grid > About > Contact
+  The featured project gets a full-width spread above the grid so there
+  is one clear first thing to look at; everything else is an even grid.
+*/
 export default function Home() {
   const featured = projects.find((p) => p.featured) ?? projects[0];
   const rest = projects.filter((p) => p.slug !== featured.slug);
+  const featuredShot = featured.images?.[0];
 
   return (
     <div>
-      {/* HERO */}
-      <section className="container-page pt-16 pb-4 sm:pt-24">
-        <p className="label mb-5">Software Engineer — University of Limerick</p>
-        <h1 className="font-display max-w-3xl text-4xl font-semibold leading-[1.1] tracking-tight text-[var(--chalk)] sm:text-6xl">
-          Jason Cushen
-        </h1>
-        <p className="mt-6 max-w-xl text-lg leading-relaxed text-[var(--chalk-dim)]">
-          I build data-driven tools — most recently a match analysis
-          platform for Gaelic football, from video ingestion through to
-          automated reporting. Computer Science graduate, currently building
-          and looking for a graduate software engineering role.
-        </p>
-        <div className="mt-8 flex flex-wrap items-center gap-4">
-          <a
-            href="/cv.pdf"
-            className="rounded-sm bg-[var(--score)] px-5 py-3 text-sm font-medium text-[var(--ink)] transition-opacity hover:opacity-90"
-          >
-            Download CV
-          </a>
-          <Link
-            href="/projects"
-            className="label rounded-sm border border-[var(--line-strong)] px-5 py-3 text-[var(--chalk)] transition-colors hover:border-[var(--score)] hover:text-[var(--score)]"
-          >
-            View projects
-          </Link>
-        </div>
-      </section>
+      {/* ---------------- HERO ---------------- */}
+      <section className="container-page pt-14 pb-16 sm:pt-20 sm:pb-24">
+        <div className="grid gap-10 lg:grid-cols-[1fr_18rem] lg:items-center lg:gap-16">
+          <div>
+            {hero.availability ? (
+              <p className="label flex items-center gap-2">
+                <span
+                  aria-hidden
+                  className="inline-block h-1.5 w-1.5 rounded-full bg-accent"
+                />
+                {hero.availability}
+              </p>
+            ) : null}
 
-      <Divider />
+            <h1 className="font-display balance mt-6 text-[clamp(2.75rem,8vw,5rem)] font-bold leading-[0.98] text-ink">
+              Jason Cushen
+            </h1>
 
-      {/* FEATURED PROJECT */}
-      <section className="container-page">
-        <div className="mb-6 flex items-center justify-between">
-          <span className="label text-[var(--score)]">Featured project</span>
-        </div>
-        <Link
-          href={`/projects/${featured.slug}`}
-          className="group grid gap-8 rounded-md border border-[var(--line)] bg-[var(--pitch-2)] p-6 transition-colors hover:border-[var(--line-strong)] sm:grid-cols-5 sm:p-10"
-        >
-          {/* Stylised pitch map — swap for a real screenshot when ready */}
-          <div className="flex aspect-video items-center justify-center rounded-sm border border-[var(--line)] bg-[var(--pitch)] p-4 sm:col-span-2 sm:aspect-auto">
-            <svg
-              viewBox="0 0 300 180"
-              className="h-full w-full"
-              role="img"
-              aria-label="Stylised Gaelic football pitch map with plotted events"
-            >
-              {/* pitch boundary + halfway line */}
-              <rect x="8" y="8" width="284" height="164" fill="none" stroke="var(--line-strong)" strokeWidth="1.5" rx="2" />
-              <line x1="150" y1="8" x2="150" y2="172" stroke="var(--line-strong)" strokeWidth="1" />
-              {/* 45m lines */}
-              <line x1="75" y1="8" x2="75" y2="172" stroke="var(--line)" strokeWidth="1" />
-              <line x1="225" y1="8" x2="225" y2="172" stroke="var(--line)" strokeWidth="1" />
-              {/* goal areas */}
-              <rect x="8" y="62" width="24" height="56" fill="none" stroke="var(--line)" strokeWidth="1" />
-              <rect x="268" y="62" width="24" height="56" fill="none" stroke="var(--line)" strokeWidth="1" />
-              {/* the D arcs */}
-              <path d="M 46 62 A 30 30 0 0 1 46 118" fill="none" stroke="var(--line)" strokeWidth="1" />
-              <path d="M 254 62 A 30 30 0 0 0 254 118" fill="none" stroke="var(--line)" strokeWidth="1" />
-              {/* plotted "events" */}
-              <circle cx="212" cy="52" r="4" fill="var(--score)" />
-              <circle cx="238" cy="96" r="4" fill="var(--score)" />
-              <circle cx="186" cy="128" r="4" fill="var(--score)" opacity="0.7" />
-              <circle cx="120" cy="74" r="4" fill="var(--score)" opacity="0.45" />
-              <circle cx="256" cy="70" r="4" fill="var(--score)" opacity="0.7" />
-            </svg>
-          </div>
-          <div className="flex flex-col justify-center sm:col-span-3">
-            <span className="label mb-3">{featured.category} · {featured.year}</span>
-            <h2 className="font-display text-2xl font-medium text-[var(--chalk)] sm:text-3xl">
-              {featured.name}
-            </h2>
-            <p className="mt-3 leading-relaxed text-[var(--chalk-dim)]">
-              {featured.summary}
+            <p className="font-display mt-4 text-xl font-medium text-ink-2 sm:text-2xl">
+              {hero.role}
             </p>
-            <div className="mt-5 flex flex-wrap gap-2">
-              {featured.stack.map((s) => (
-                <Tag key={s}>{s}</Tag>
-              ))}
+
+            <p className="pretty mt-6 max-w-xl text-lg leading-relaxed text-ink-3">
+              {hero.intro}
+            </p>
+
+            <div className="mt-9 flex flex-wrap items-center gap-3">
+              <Link
+                href="/projects"
+                className="group flex h-12 items-center gap-2 rounded-[3px] bg-ink px-6 text-sm font-medium text-white transition-colors duration-200 hover:bg-accent"
+              >
+                View projects
+                <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
+              </Link>
+              <a
+                href="/Jason_Cushen-CV.pdf"
+                className="flex h-12 items-center gap-2 rounded-[3px] border border-line-3 px-6 text-sm font-medium text-ink transition-colors duration-200 hover:border-ink hover:bg-surface"
+              >
+                Download CV
+                <Download className="h-4 w-4" />
+              </a>
             </div>
-            <span className="label mt-6 inline-flex items-center gap-1 text-[var(--chalk)] transition-transform group-hover:translate-x-1">
-              Read the case study →
-            </span>
           </div>
-        </Link>
+
+          {/* Portrait — swap in a real photo via `portrait` in profile.ts. */}
+          <div className="mx-auto w-full max-w-[15rem] sm:max-w-[16rem] lg:mx-0 lg:max-w-none">
+            <Portrait />
+          </div>
+        </div>
+
+        {/*
+          Fact band — the four things a recruiter checks first, set as one
+          hairline-divided strip. gap-px over a line-coloured background is
+          what draws the dividers, so there are no double borders where the
+          cells meet and the grid stays flush at every breakpoint.
+        */}
+        <dl className="mt-12 grid grid-cols-2 gap-px border border-line bg-line sm:mt-14 sm:grid-cols-4">
+          {heroFacts.map((f) => (
+            <div key={f.label} className="bg-bg p-5">
+              <dt className="label">{f.label}</dt>
+              <dd className="pretty mt-2 text-sm leading-snug text-ink-2">
+                {f.value}
+              </dd>
+            </div>
+          ))}
+        </dl>
       </section>
 
-      <Divider label="Other work" />
+      {/* ---------------- SELECTED WORK ---------------- */}
+      <section className="container-page">
+        <SectionHead
+          label="Selected work"
+          meta={`${projects.length} projects`}
+        />
 
-      {/* PROJECT GRID */}
-      <section className="container-page pb-24">
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {rest.map((project) => (
-            <ProjectCard key={project.slug} project={project} />
+        {/* Featured spread */}
+        <Reveal className="mt-10">
+          <Link
+            href={`/projects/${featured.slug}`}
+            className="group grid gap-8 border border-line bg-surface p-5 transition-colors duration-200 hover:border-line-3 sm:p-8 lg:grid-cols-[1.15fr_1fr] lg:gap-12"
+          >
+            <div className="order-2 flex flex-col justify-center lg:order-1">
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                <span className="label label-accent">Featured</span>
+                <span aria-hidden className="h-1 w-1 rounded-full bg-line-2" />
+                <span className="label">{featured.category}</span>
+                <span aria-hidden className="h-1 w-1 rounded-full bg-line-2" />
+                <span className="label">{featured.year}</span>
+              </div>
+
+              <h3 className="font-display balance mt-4 text-2xl font-semibold leading-[1.1] text-ink transition-colors duration-200 group-hover:text-accent sm:text-4xl">
+                {featured.name}
+              </h3>
+
+              <p className="pretty mt-4 max-w-xl leading-relaxed text-ink-3">
+                {featured.summary}
+              </p>
+
+              <div className="mt-5 flex flex-wrap gap-1.5">
+                {featured.stack.map((s) => (
+                  <Tag key={s}>{s}</Tag>
+                ))}
+              </div>
+
+              <span className="label label-accent mt-7 flex items-center gap-1.5">
+                Read the case study
+                <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-1" />
+              </span>
+            </div>
+
+            <div className="order-1 self-center overflow-hidden border border-line lg:order-2">
+              {featuredShot ? (
+                <Image
+                  src={featuredShot.src}
+                  alt={featuredShot.alt}
+                  width={1600}
+                  height={1067}
+                  priority
+                  className="aspect-[3/2] w-full object-cover"
+                />
+              ) : (
+                <ProjectPlate project={featured} />
+              )}
+            </div>
+          </Link>
+        </Reveal>
+
+        {/* The rest */}
+        <div className="mt-6 grid gap-6 sm:grid-cols-2">
+          {rest.map((project, i) => (
+            <Reveal key={project.slug} delay={i * 60}>
+              <ProjectCard project={project} />
+            </Reveal>
           ))}
+        </div>
+      </section>
+
+      {/* ---------------- ABOUT ---------------- */}
+      <section className="container-page mt-24 sm:mt-32">
+        <SectionHead label="About" />
+        <div className="mt-10 grid gap-10 lg:grid-cols-[1fr_1.35fr] lg:gap-20">
+          <p className="font-display balance text-2xl font-medium leading-[1.25] text-ink sm:text-3xl">
+            Turning messy real-world data into tools people actually open.
+          </p>
+          <div>
+            <p className="pretty text-lg leading-relaxed text-ink-3">
+              {homeAbout}
+            </p>
+            <Link
+              href="/about"
+              className="group mt-6 inline-flex items-center gap-1.5 text-sm font-medium text-accent transition-colors duration-200 hover:text-accent-2"
+            >
+              More about me
+              <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ---------------- CONTACT CTA ---------------- */}
+      <section className="no-print container-page mt-24 sm:mt-32">
+        <div className="border border-line bg-surface p-8 sm:p-14">
+          <div className="flex flex-col items-start justify-between gap-8 lg:flex-row lg:items-center">
+            <div>
+              <h2 className="font-display balance max-w-lg text-2xl font-semibold leading-tight text-ink sm:text-4xl">
+                Looking for a graduate software engineer?
+              </h2>
+              <p className="pretty mt-3 max-w-md leading-relaxed text-ink-3">
+                I&apos;m open to graduate roles and happy to walk through any
+                of these projects in more detail.
+              </p>
+            </div>
+            <Link
+              href="/contact"
+              className="group flex h-12 shrink-0 items-center gap-2 rounded-[3px] bg-ink px-7 text-sm font-medium text-white transition-colors duration-200 hover:bg-accent"
+            >
+              Get in touch
+              <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
+            </Link>
+          </div>
         </div>
       </section>
     </div>

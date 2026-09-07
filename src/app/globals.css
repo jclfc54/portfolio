@@ -1,41 +1,64 @@
 @import "tailwindcss";
 
 /*
-  DESIGN TOKENS — grounded in the subject: a software engineer who builds
-  match-analysis tools for Gaelic football. Dark "under the floodlights"
-  pitch surface, chalk-white pitch-line type, one scoreboard-amber accent.
-  Signature element: a hairline "halfway line" divider (rule + centre dot)
-  reused between every section, everywhere in the site.
+  DESIGN TOKENS — "Swiss minimal, monochrome + one blue"
+  ------------------------------------------------------------------
+  Direction resolved with the ui-ux-pro-max skill:
+    product  Portfolio/Personal  -> Minimalism & Swiss Style
+    pattern  portfolio-grid      -> Hero > Project grid > About > Contact
+    colour   Portfolio/Personal  -> monochrome ground + single blue accent
+    type     Minimalist Portfolio / Minimal Swiss
+             Space Grotesk (display) + Inter (body) + JetBrains Mono (labels)
+
+  Rules of the system:
+    - The ground is neutral so the work is the only thing with colour.
+    - Blue is used ONLY for interactive or "live" meaning, never decoration.
+    - Structure is expressed with hairlines and space, not boxes and shadows.
+    - Radii stay tight (2-4px). No pills, no soft cards.
+  Every text pair below is verified >= 4.5:1 against its background.
 */
 
 :root {
-  --pitch: #0d1a13;       /* base dark surface — night pitch */
-  --pitch-2: #142519;     /* elevated surface — cards, nav */
-  --pitch-3: #1b3423;     /* hover / active surface */
-  --chalk: #eef1e8;       /* pitch-line white — primary text on dark */
-  --chalk-dim: #aebbab;   /* secondary text on dark */
-  --ink: #0f150e;         /* text on light surfaces */
-  --paper: #f4f6ef;       /* light surface (used sparingly, e.g. forms) */
-  --score: #e8a33d;       /* scoreboard amber — the one accent */
-  --score-dim: #b97f2c;
-  --line: rgba(238, 241, 232, 0.14); /* hairline rule on dark */
-  --line-strong: rgba(238, 241, 232, 0.26);
+  --bg: #fafafa;          /* page ground */
+  --surface: #ffffff;     /* raised: cards, nav, figures */
+  --surface-2: #f4f5f7;   /* muted fill: chips, code, empty plates */
 
-  --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
-  --font-body: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", monospace;
+  --ink: #09090b;         /* primary text            19.1:1 on bg */
+  --ink-2: #3f3f46;       /* secondary text          10.0:1 on bg */
+  --ink-3: #475569;       /* muted / meta text        7.3:1 on bg */
+
+  --accent: #2563eb;      /* the one accent           5.0:1 on bg */
+  --accent-2: #1d4ed8;    /* hover / pressed          6.4:1 on bg */
+
+  --line: #e4e4e7;        /* hairline rule (decorative) */
+  --line-2: #d4d4d8;      /* stronger rule */
+  --line-3: #71717a;      /* interactive borders — 3:1 for WCAG 1.4.11 */
+  --ring: #18181b;        /* focus ring */
+
+  /* Type stacks. The *-src vars are injected by next/font in layout.tsx. */
+  --font-display: var(--font-display-src), "Space Grotesk", system-ui, sans-serif;
+  --font-body: var(--font-body-src), "Inter", system-ui, sans-serif;
+  --font-mono: var(--font-mono-src), "JetBrains Mono", ui-monospace, monospace;
+
+  /* Spacing uses Tailwind's own scale at standard density (16-64px):
+     gap-4/6 inside components, mt-24/32 between page sections. */
+  --radius: 3px;
+  --ease: cubic-bezier(0.33, 0, 0.67, 1); /* ~power1.out */
 }
 
 @theme inline {
-  --color-pitch: var(--pitch);
-  --color-pitch-2: var(--pitch-2);
-  --color-pitch-3: var(--pitch-3);
-  --color-chalk: var(--chalk);
-  --color-chalk-dim: var(--chalk-dim);
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
   --color-ink: var(--ink);
-  --color-paper: var(--paper);
-  --color-score: var(--score);
-  --color-score-dim: var(--score-dim);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-accent: var(--accent);
+  --color-accent-2: var(--accent-2);
+  --color-line: var(--line);
+  --color-line-2: var(--line-2);
+  --color-line-3: var(--line-3);
+
   --font-display: var(--font-display);
   --font-body: var(--font-body);
   --font-mono: var(--font-mono);
@@ -47,8 +70,104 @@
 
 html {
   scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
 }
 
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--accent);
+  color: #fff;
+}
+
+/* Visible focus for keyboard users on every interactive element. */
+:where(a, button, input, textarea, select, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* ---------- Type utilities ---------- */
+
+.font-display {
+  font-family: var(--font-display);
+  letter-spacing: -0.022em;
+}
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+/*
+  The metadata voice of the whole site: small uppercase mono.
+  Used for eyebrows, dates, categories, figure numbers, table headers.
+  Mono is what separates "data about the work" from "the work".
+*/
+.label {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  font-variant-ligatures: none;
+}
+
+.label-accent {
+  color: var(--accent);
+}
+
+/* Balanced headline wrapping — kills orphan words on 2-3 line headings. */
+.balance {
+  text-wrap: balance;
+}
+.pretty {
+  text-wrap: pretty;
+}
+
+/* ---------- Layout ---------- */
+
+.container-page {
+  max-width: 74rem;
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+}
+
+@media (min-width: 640px) {
+  .container-page {
+    padding-inline: 2rem;
+  }
+}
+
+/* ---------- Motion (tier: Subtle — 300-400ms, ease-out) ---------- */
+
+/*
+  Content is only hidden when scripting is actually available to un-hide
+  it. Without this guard, a visitor with JavaScript disabled would get a
+  page of permanently invisible sections, since the reveal class is only
+  removed by an IntersectionObserver. Browsers that do not support the
+  `scripting` feature simply skip the rule and render everything visible,
+  which is the safe direction to fail in — the animation is decoration.
+*/
+.reveal {
+  transition: opacity 380ms var(--ease), transform 380ms var(--ease);
+}
+
+@media (scripting: enabled) {
+  .reveal:not(.is-in) {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+/* Motion is decoration here: strip it entirely when asked to. */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -61,76 +180,120 @@ html {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+  .reveal:not(.is-in) {
+    opacity: 1;
+    transform: none;
+  }
 }
 
-body {
-  background: var(--pitch);
-  color: var(--chalk);
-  font-family: var(--font-body);
-  -webkit-font-smoothing: antialiased;
-}
+/* ---------- Skip link ---------- */
 
-::selection {
-  background: var(--score);
-  color: var(--ink);
-}
-
-a:focus-visible,
-button:focus-visible,
-input:focus-visible,
-textarea:focus-visible {
-  outline: 2px solid var(--score);
-  outline-offset: 3px;
-}
-
-.font-display {
-  font-family: var(--font-display);
-}
-.font-mono {
-  font-family: var(--font-mono);
-}
-
-.label {
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--chalk-dim);
-}
-
-.halfway {
-  position: relative;
-  width: 100%;
-  height: 1px;
-  background: var(--line);
-  transform-origin: center;
-}
-.halfway::before {
-  content: "";
+.skip-link {
   position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 6px;
-  height: 6px;
-  border: 1px solid var(--line-strong);
-  border-radius: 999px;
-  background: var(--pitch);
-  transform: translate(-50%, -50%);
+  left: 0.75rem;
+  top: -4rem;
+  z-index: 100;
+  background: var(--ink);
+  color: #fff;
+  padding: 0.75rem 1.25rem;
+  border-radius: var(--radius);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: top 160ms var(--ease);
 }
-.halfway.draw {
-  animation: draw-line 900ms cubic-bezier(0.65, 0, 0.35, 1) both;
-}
-@keyframes draw-line {
-  from {
-    transform: scaleX(0);
-  }
-  to {
-    transform: scaleX(1);
-  }
+.skip-link:focus {
+  top: 0.75rem;
 }
 
-.container-page {
-  max-width: 72rem;
-  margin-inline: auto;
-  padding-inline: 1.5rem;
+/* ---------- Print ---------- */
+
+/*
+  Scoped deliberately narrowly: this is NOT a "site as CV" stylesheet —
+  /Jason_Cushen-CV.pdf is the right artifact for that and the CV button
+  already serves it. This exists for the one thing the PDF cannot cover:
+  someone hitting Ctrl+P on a case study to read offline, annotate, or
+  file against an application. So it strips the interface, keeps the
+  writing, and makes links resolvable on paper.
+*/
+@media print {
+  /* Interface has no meaning on paper. */
+  header,
+  footer,
+  .skip-link,
+  .no-print {
+    display: none !important;
+  }
+
+  /* Ink-friendly: solid black text on white, hairlines to mid grey.
+     Utilities compile to var(--ink) etc., so redefining the tokens here
+     recolours every component without touching a single class name. */
+  :root {
+    --bg: #fff;
+    --surface: #fff;
+    --surface-2: #fff;
+    --ink: #000;
+    --ink-2: #1a1a1a;
+    --ink-3: #333;
+    --accent: #000;
+    --accent-2: #000;
+    --line: #bbb;
+    --line-2: #999;
+    --line-3: #777;
+  }
+
+  body {
+    background: #fff;
+    font-size: 11pt;
+    line-height: 1.45;
+  }
+
+  .container-page {
+    max-width: none;
+    padding-inline: 0;
+  }
+
+  /* Scroll reveals must never leave a blank sheet. */
+  .reveal,
+  .reveal:not(.is-in) {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  /* A sticky rail would otherwise repeat or float mid-page. */
+  aside {
+    position: static !important;
+  }
+
+  /* Make external links resolvable once the page leaves the screen. */
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-family: var(--font-mono);
+    font-size: 8.5pt;
+    color: #555;
+    word-break: break-all;
+  }
+
+  /* Keep records, figures and headings whole across page breaks. */
+  section,
+  figure,
+  li,
+  dl > div {
+    break-inside: avoid;
+  }
+  h1,
+  h2,
+  h3 {
+    break-after: avoid;
+  }
+
+  img,
+  svg {
+    max-width: 100% !important;
+  }
+
+  @page {
+    margin: 18mm 16mm;
+  }
 }
